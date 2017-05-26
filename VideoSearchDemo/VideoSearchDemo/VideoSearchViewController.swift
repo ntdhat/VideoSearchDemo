@@ -70,13 +70,19 @@ class VideoSearchViewController: UIViewController {
                                                    "query" : searchResult.searchQuery]
         
         MovieDBClient.searchMovie(parameters: parameters, completionHanler: { response in
-            guard let result = response.result.value else {
+            switch response.result {
+            case .success:
+                guard
+                    let _ = response.result.value,
+                    let resultDict = response.result.value as? NSDictionary else {
+                        self.displaySearchError()
+                        return
+                }
+                self.updateSearchResult(result: resultDict)
+                
+            case .failure(_):
                 self.displaySearchError()
-                return
             }
-            
-            let dict = result as! NSDictionary
-            self.updateSearchResult(result: dict)
         })
     }
     
@@ -93,13 +99,19 @@ class VideoSearchViewController: UIViewController {
                                                    "query" : searchResult.searchQuery]
         
         MovieDBClient.searchMovie(parameters: parameters, completionHanler: { response in
-            guard let result = response.result.value else {
+            switch response.result {
+            case .success:
+                guard
+                    let _ = response.result.value,
+                    let resultDict = response.result.value as? NSDictionary else {
+                        self.displaySearchError()
+                        return
+                }
+                self.addSearchResults(additionalResult: resultDict)
+                
+            case .failure(_):
                 self.displaySearchError()
-                return
             }
-            
-            let dict = result as! NSDictionary
-            self.addSearchResults(additionalResult: dict)
         })
     }
     
@@ -125,8 +137,8 @@ class VideoSearchViewController: UIViewController {
         }
         
         videoDatas.removeAll()
-        for jsonObj in results {
-            guard let item = jsonObj as? NSDictionary else {
+        for dict in results {
+            guard let item = dict as? NSDictionary else {
                 break;
             }
             let model = createVideoModel(item)
@@ -145,12 +157,13 @@ class VideoSearchViewController: UIViewController {
             let totalPages = additionalResult.value(forKey: MovieDBClient.JSONKey_TotalPages) as? Int,
             let curPage = additionalResult.value(forKey: MovieDBClient.JSONKey_CurrentPage) as? Int,
             let newResults = additionalResult.value(forKey: MovieDBClient.JSONKey_ResultsArray) as? Array<Any> else { return }
+        
         searchResult.totalResults = totalResults
         searchResult.totalPages = totalPages
         searchResult.currentPage = curPage
         
-        for jsonObj in newResults {
-            guard let item = jsonObj as? NSDictionary else {
+        for dict in newResults {
+            guard let item = dict as? NSDictionary else {
                 break;
             }
             let model = createVideoModel(item)
@@ -232,15 +245,13 @@ extension VideoSearchViewController : UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < videoDatas.count {
-            let cell : VideoSearchResultCell
-            cell = videoTableView.dequeueReusableCell(withIdentifier: "VideoSearchResultCell", for: indexPath) as! VideoSearchResultCell
+            let cell = videoTableView.dequeueReusableCell(withIdentifier: "VideoSearchResultCell", for: indexPath) as! VideoSearchResultCell
             let videoData = videoDatas[indexPath.row]
             cell.configurate(data: videoData)
             return cell
         }
         else {
-            let cell : LoadingMoreCell
-            cell = videoTableView.dequeueReusableCell(withIdentifier: "LoadingMoreCell", for: indexPath) as! LoadingMoreCell
+            let cell = videoTableView.dequeueReusableCell(withIdentifier: "LoadingMoreCell", for: indexPath) as! LoadingMoreCell
             cell.configurate()
             return cell
         }

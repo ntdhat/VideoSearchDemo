@@ -20,7 +20,8 @@
 		84DE09FB1ED69F650095FA0A /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DE09F71ED69F650095FA0A /* VideoViewModel.swift */; };
 		84DE09FD1ED6BE020095FA0A /* MovieDBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DE09FC1ED6BE020095FA0A /* MovieDBClient.swift */; };
 		84DE09FF1ED6E8990095FA0A /* VideoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DE09FE1ED6E8990095FA0A /* VideoDetailViewController.swift */; };
-		CE9523180DE1C314846437DF /* Pods_VideoSearchDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38034D303DAE140DEE088050 /* Pods_VideoSearchDemo.framework */; };
+		84DE0A061ED7A3F00095FA0A /* Pods_VideoSearchDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DE0A001ED7A3D70095FA0A /* Pods_VideoSearchDemo.framework */; };
+		8B743A09E3B180676ACFF56A /* Pods_VideoSearchDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38034D303DAE140DEE088050 /* Pods_VideoSearchDemo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,9 @@
 		84DE09F71ED69F650095FA0A /* VideoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewModel.swift; sourceTree = "<group>"; };
 		84DE09FC1ED6BE020095FA0A /* MovieDBClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieDBClient.swift; sourceTree = "<group>"; };
 		84DE09FE1ED6E8990095FA0A /* VideoDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDetailViewController.swift; sourceTree = "<group>"; };
+		84DE0A001ED7A3D70095FA0A /* Pods_VideoSearchDemo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_VideoSearchDemo.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/VideoSearchDemo-bipkbahbjighguhkbbgdkasotdmu/Build/Products/Debug-iphonesimulator/Pods_VideoSearchDemo.framework"; sourceTree = "<group>"; };
+		84DE0A021ED7A3E30095FA0A /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/VideoSearchDemo-bipkbahbjighguhkbbgdkasotdmu/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		84DE0A041ED7A3E60095FA0A /* AlamofireImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlamofireImage.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/VideoSearchDemo-bipkbahbjighguhkbbgdkasotdmu/Build/Products/Debug-iphonesimulator/AlamofireImage/AlamofireImage.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +74,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE9523180DE1C314846437DF /* Pods_VideoSearchDemo.framework in Frameworks */,
+				84DE0A061ED7A3F00095FA0A /* Pods_VideoSearchDemo.framework in Frameworks */,
+				8B743A09E3B180676ACFF56A /* Pods_VideoSearchDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +167,9 @@
 		C524C22DDE17BBADDAC453CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84DE0A041ED7A3E60095FA0A /* AlamofireImage.framework */,
+				84DE0A021ED7A3E30095FA0A /* Alamofire.framework */,
+				84DE0A001ED7A3D70095FA0A /* Pods_VideoSearchDemo.framework */,
 				38034D303DAE140DEE088050 /* Pods_VideoSearchDemo.framework */,
 			);
 			name = Frameworks;

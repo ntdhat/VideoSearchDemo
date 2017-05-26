@@ -53,11 +53,11 @@ class MovieDBClient {
         return MovieDB_API_BaseUrl + MovieDB_API_GenresList
     }()
     
-    static var configurationBaseUrl : String!
-    static var configurationBackdropSize : NSArray!
-    static var configurationPosterSize : NSArray!
+    static var configurationBaseUrl : String?
+    static var configurationBackdropSize : NSArray?
+    static var configurationPosterSize : NSArray?
     
-    static var genres : NSArray!
+    static var genres : NSArray?
     
     static func searchMovie(parameters params : Dictionary<String, Any>, completionHanler completion : @escaping (DataResponse<Any>) -> Void ) {
         var paramsWithApiKey = params
@@ -71,29 +71,36 @@ class MovieDBClient {
     static func loadConfiguration() {
         let params : Parameters = ["api_key" : ApiKey]
         Alamofire.request(configurationFinalUrl, method: .get, parameters: params).responseJSON { response in
-            guard let result = response.result.value else {
-                return
+            switch response.result {
+            case .success:
+                guard
+                    let _ = response.result.value,
+                    let resultDict = response.result.value as? NSDictionary else { return }
+                
+                let imagesConfiguation = resultDict.value(forKey: JSONKey_ConfigurationImages) as? NSDictionary
+                configurationBaseUrl = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBaseURL) as? String
+                configurationPosterSize = imagesConfiguation?.value(forKey: JSONKey_ConfigurationPosterSizes) as? NSArray
+                configurationBackdropSize = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBackdropSizes) as? NSArray
+                
+            case .failure(let error):
+                print(error)
             }
-            
-            let json = result as! NSDictionary
-            //print("JSON: \(json)")
-            
-            let imagesConfiguation = json.value(forKey: JSONKey_ConfigurationImages) as? NSDictionary
-            configurationBaseUrl = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBaseURL) as! String
-            configurationPosterSize = imagesConfiguation?.value(forKey: JSONKey_ConfigurationPosterSizes) as! NSArray
-            configurationBackdropSize = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBackdropSizes) as! NSArray
         }
     }
     
     static func loadGenresList() {
         let params : Parameters = ["api_key" : ApiKey]
         Alamofire.request(genresListFinalUrl, method: .get, parameters: params).responseJSON { response in
-            guard let result = response.result.value else {
-                return
+            switch response.result {
+            case .success:
+                guard
+                    let _ = response.result.value,
+                    let resultDict = response.result.value as? NSDictionary else { return }
+                genres = resultDict.value(forKey: JSONKey_GenresList) as? NSArray
+                
+            case .failure(let error):
+                print(error)
             }
-            
-            let json = result as! NSDictionary
-            genres = json.value(forKey: JSONKey_GenresList) as! NSArray
         }
     }
 }

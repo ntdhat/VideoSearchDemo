@@ -33,14 +33,16 @@ class VideoDetailViewController: UIViewController {
     func setupUIs() {
         lblTitle.text = detailData.title
         lblOriginalTitle.text = detailData.originalTitle
-        lblReleaseDate.text = "Released: \(detailData.releaseDate!)"
-        lblPopularity.text = "Popularity: \(detailData.popularity!)"
-        lblVote.text = "User vote: \(detailData.voteAverage!) (\(detailData.voteCount!) votes)"
+        lblReleaseDate.text = "Released: \(detailData.releaseDate ?? "")"
+        lblPopularity.text = "Popularity: \(detailData.popularity ?? 0)"
+        lblVote.text = "User vote: \(detailData.voteAverage ?? 0) (\(detailData.voteCount ?? 0) votes)"
         lblGenres.text = "Genres: "
         textViewOverview.text = detailData.overview
         
-        for element in detailData.genres {
-            lblGenres.text?.append("\(element), ")
+        if let genres = detailData.genres {
+            for element in genres {
+                lblGenres.text?.append("\(element), ")
+            }
         }
         
         if let backdropUrl = detailData.backdropURL { imvBackdrop.af_setImage(withURL: backdropUrl) }

@@ -19,8 +19,10 @@ struct SearchResult {
 
 class VideoSearchViewController: UIViewController {
     
+    @IBOutlet weak var lblGreeting: UILabel!
     @IBOutlet weak var videoTableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var searchResult : SearchResult = SearchResult(totalPages: 0, totalResults: 0, currentPage: 0, searchQuery: "")
     var videoDatas = [VideoViewModel]()
@@ -58,6 +60,10 @@ class VideoSearchViewController: UIViewController {
     }
     
     func startSearch(searchText : String) {
+        activityIndicator.startAnimating()
+        lblGreeting.isHidden = true
+        videoTableView.isHidden = false
+        
         searchResult.searchQuery = searchBar.text!
         let parameters: Dictionary<String, Any> = ["language" : "en-US",
                                                    "page" : 1,
@@ -80,6 +86,8 @@ class VideoSearchViewController: UIViewController {
             !searchResult.searchQuery.isEmpty
         else { return }
         
+        activityIndicator .startAnimating()
+        
         let parameters: Dictionary<String, Any> = ["language" : "en-US",
                                                    "page" : searchResult.currentPage + 1,
                                                    "query" : searchResult.searchQuery]
@@ -96,6 +104,8 @@ class VideoSearchViewController: UIViewController {
     }
     
     func updateSearchResult(result : NSDictionary) {
+        activityIndicator .stopAnimating()
+        
         guard
             let totalResults = result.value(forKey: MovieDBClient.JSONKey_TotalResult) as? Int,
             let totalPages = result.value(forKey: MovieDBClient.JSONKey_TotalPages) as? Int,
@@ -128,6 +138,8 @@ class VideoSearchViewController: UIViewController {
     }
     
     func addSearchResults(additionalResult : NSDictionary) {
+        activityIndicator .stopAnimating()
+        
         guard
             let totalResults = additionalResult.value(forKey: MovieDBClient.JSONKey_TotalResult) as? Int,
             let totalPages = additionalResult.value(forKey: MovieDBClient.JSONKey_TotalPages) as? Int,

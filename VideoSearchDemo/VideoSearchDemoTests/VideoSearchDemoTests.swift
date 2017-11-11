@@ -10,6 +10,7 @@ import XCTest
 @testable import VideoSearchDemo
 
 class VideoSearchDemoTests: XCTestCase {
+    var videoViewModelTest : VideoViewModel!
     
     override func setUp() {
         super.setUp()
@@ -18,6 +19,7 @@ class VideoSearchDemoTests: XCTestCase {
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        videoViewModelTest = nil
         super.tearDown()
     }
     

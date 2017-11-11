@@ -35,6 +35,10 @@ class VideoSearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        MovieDBClient.loadConfiguration()
+        MovieDBClient.loadGenresList()
+        
         videoDatas = [VideoViewModel]()
         registerForNotifications()
     }

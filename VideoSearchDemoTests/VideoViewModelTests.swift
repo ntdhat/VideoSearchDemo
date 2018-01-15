@@ -17,6 +17,13 @@ class VideoViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        /** Read file for tests
+        let testBundle = Bundle(for: type(of: self))
+        let path = testBundle.path(forResource: "abbaData", ofType: "json")
+        let data = try? Data(contentsOf: URL(fileURLWithPath: path!), options: .alwaysMapped)
+        */
+        
         myDict = NSMutableDictionary()
         
         MovieDBClient.configurationBaseUrl = "_baseUrl_"

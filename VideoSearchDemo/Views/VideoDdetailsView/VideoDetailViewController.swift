@@ -9,7 +9,7 @@
 import UIKit
 
 class VideoDetailViewController: UIViewController {
-    var detailData : VideoDetailViewModel!
+    var viewModel : VideoDetailViewModel!
     var loadImageCompletion: (()->Void)?
     
     var didSetupUI: Bool = false
@@ -32,14 +32,14 @@ class VideoDetailViewController: UIViewController {
     }
     
     func setupUIs() {
-        lblTitle.text = detailData.title
-        lblReleaseDate.text = detailData.textReleaseDateRefined
-        lblPopularity.text = detailData.textPopularity
-        lblVote.text = detailData.textVote
-        lblGenres.text = detailData.textGenres
-        textViewOverview.text = detailData.overview
+        lblTitle.text = viewModel.title
+        lblReleaseDate.text = viewModel.textReleaseDateRefined
+        lblPopularity.text = viewModel.textPopularity
+        lblVote.text = viewModel.textVote
+        lblGenres.text = viewModel.textGenres
+        textViewOverview.text = viewModel.overview
         
-        if let posterUrl = detailData.posterURL {
+        if let posterUrl = viewModel.posterURL {
             imvBackdrop.af_setImage(withURL: posterUrl, placeholderImage: nil, filter: nil, progress: nil, progressQueue: DispatchQueue.main, imageTransition: .noTransition, runImageTransitionIfCached: false, completion: { response in
                 self.loadImageCompletion?()
             })
@@ -47,35 +47,6 @@ class VideoDetailViewController: UIViewController {
         
         didSetupUI = true
     }
-}
-
-protocol VideoModelToText {
-    var textReleaseDateRefined : String { get }
-    var textPopularity : String { get }
-    var textVote : String { get }
-    var textGenres : String { get }
-}
-
-class VideoDetailViewModel : VideoViewModel, VideoModelToText {
-    var textReleaseDateRefined : String {
-        get {return "Released: \(releaseDate)"}
-    }
-    
-    var textPopularity : String {
-        get {return "Popularity: \(popularity)"}
-    }
-    
-    var textVote : String {
-        get {return "User vote: \(voteAverage) (\(voteCount) votes)"}
-    }
-    
-    lazy var textGenres : String = {
-        var txt = "Genres: "
-        for element in genres {
-            txt.append("\(element), ")
-        }
-        return txt
-    }()
 }
 
 

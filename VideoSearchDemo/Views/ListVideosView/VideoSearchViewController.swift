@@ -10,13 +10,6 @@ import UIKit
 
 let TABLEVIEW_MAX_ITEM = 200
 
-struct SearchResult {
-    var totalPages : Int = 0
-    var totalResults : Int = 0
-    var currentPage : Int = 0
-    var searchQuery : String = ""
-}
-
 //public class ListNode<T> {
 //    public var value: T
 //    public var next: ListNode<T>?
@@ -35,8 +28,7 @@ class VideoSearchViewController: UIViewController {
     @IBOutlet weak var videoTableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
-    var searchResult : SearchResult = SearchResult()
-    var videoDatas = [VideoViewModel]()
+    var viewModel = SearchVideoViewModel()
     var currentSelectedIdxPath : IndexPath!
     
     lazy var tapRecognizer: UITapGestureRecognizer = {
@@ -84,108 +76,43 @@ class VideoSearchViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailView", let detailVC = segue.destination as? VideoDetailViewController {
-            let viewmodel = videoDatas[currentSelectedIdxPath.row]
-            let model = viewmodel.model
-            detailVC.detailData = VideoDetailViewModel(model)
+            let videoDetailsBasicInfo = viewModel[currentSelectedIdxPath.row]
+            detailVC.viewModel = VideoDetailViewModel(childViewModel: videoDetailsBasicInfo)
         }
     }
     
     func startSearch(searchText : String) {
-        searchResult.searchQuery = searchBar.text!
-        let parameters: Dictionary<String, Any> = ["language" : "en-US",
-                                                   "page" : 1,
-                                                   "query" : searchResult.searchQuery]
-        
-        MovieDBClient.searchMovie(parameters: parameters, completionHanler: { response in
-            guard let result = response.result.value else {
+        viewModel.search(for: searchBar.text) { isSuccess in
+            guard isSuccess == true else {
                 self.displaySearchError()
                 return
             }
-            
-            let dict = result as! NSDictionary
-            self.updateSearchResult(result: dict)
-        })
-    }
-    
-    @objc func loadMore() {
-        guard
-            searchResult.currentPage < searchResult.totalPages,
-            !searchResult.searchQuery.isEmpty
-        else { return }
-        
-        let parameters: Dictionary<String, Any> = ["language" : "en-US",
-                                                   "page" : searchResult.currentPage + 1,
-                                                   "query" : searchResult.searchQuery]
-        
-        MovieDBClient.searchMovie(parameters: parameters, completionHanler: { response in
-            guard let result = response.result.value else {
-                self.displaySearchError()
-                return
-            }
-            
-            let dict = result as! NSDictionary
-            self.addSearchResults(additionalResult: dict)
-        })
-    }
-    
-    func updateSearchResult(result : NSDictionary) {
-        guard
-            let totalResults = result.value(forKey: MovieDBClient.JSONKey_TotalResult) as? Int,
-            let totalPages = result.value(forKey: MovieDBClient.JSONKey_TotalPages) as? Int,
-            let curPage = result.value(forKey: MovieDBClient.JSONKey_CurrentPage) as? Int,
-            let results = result.value(forKey: MovieDBClient.JSONKey_ResultsArray) as? Array<Any> else {
-            displaySearchError()
-            return
+            self.updateSearchResults()
         }
-        
-        searchResult.totalResults = totalResults
-        searchResult.totalPages = totalPages
-        searchResult.currentPage = curPage
-        
-        guard totalResults > 0 else {
+    }
+    
+    @objc func loadMore() {        
+        viewModel.loadMoreSearchResults() { isSuccess in
+            guard isSuccess == true else {
+                self.displaySearchError()
+                return
+            }
+            self.videoTableView.reloadData()
+        }
+    }
+    
+    func updateSearchResults() {
+        guard viewModel.totalResults > 0 else {
             displayNoSearchResult()
             return
-        }
-        
-        videoDatas.removeAll()
-        for jsonObj in results {
-            guard let itemDict = jsonObj as? NSDictionary
-                else {
-                    break;
-            }
-            let viewmodel = VideoModel(from: itemDict)
-            videoDatas.append(VideoViewModel(viewmodel))
         }
         
         videoTableView.reloadData()
         videoTableView.contentOffset = .zero
     }
     
-    func addSearchResults(additionalResult : NSDictionary) {
-        guard
-            let totalResults = additionalResult.value(forKey: MovieDBClient.JSONKey_TotalResult) as? Int,
-            let totalPages = additionalResult.value(forKey: MovieDBClient.JSONKey_TotalPages) as? Int,
-            let curPage = additionalResult.value(forKey: MovieDBClient.JSONKey_CurrentPage) as? Int,
-            let newResults = additionalResult.value(forKey: MovieDBClient.JSONKey_ResultsArray) as? Array<Any> else {
-                return
-        }
-        
-        searchResult.totalResults = totalResults
-        searchResult.totalPages = totalPages
-        searchResult.currentPage = curPage
-        
-        for jsonObj in newResults {
-            guard let item = jsonObj as? NSDictionary else {
-                break;
-            }
-            videoDatas.append(VideoViewModel(VideoModel(from: item)))
-        }
-        
-        videoTableView.reloadData()
-    }
-    
     func isAllResultsDisplayed() -> Bool {
-        return videoDatas.count == searchResult.totalResults
+        return viewModel.currentPage == viewModel.totalPages
     }
     
     func displaySearchError() {
@@ -228,7 +155,7 @@ extension VideoSearchViewController : UISearchBarDelegate {
 // MARK: - UITableView hanlders
 extension VideoSearchViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.row < videoDatas.count ? 160 : 50
+        return indexPath.row < viewModel.totalResults ? 160 : 50
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -236,14 +163,14 @@ extension VideoSearchViewController : UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return min(isAllResultsDisplayed() ? videoDatas.count : videoDatas.count + 1, TABLEVIEW_MAX_ITEM)
+        return min(isAllResultsDisplayed() ? viewModel.totalResults : viewModel.totalResults + 1, TABLEVIEW_MAX_ITEM)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row < videoDatas.count {
-            let cell : VideoSearchResultCell
-            cell = videoTableView.dequeueReusableCell(withIdentifier: "VideoSearchResultCell", for: indexPath) as! VideoSearchResultCell
-            let videoData = videoDatas[indexPath.row]
+        if indexPath.row < viewModel.totalResults  {
+            let cell : SearchVideoResultCell
+            cell = videoTableView.dequeueReusableCell(withIdentifier: "SearchVideoResultCell", for: indexPath) as! SearchVideoResultCell
+            let videoData = viewModel[indexPath.row]
             cell.configurate(data: videoData)
             return cell
         }

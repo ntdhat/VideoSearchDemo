@@ -9,7 +9,7 @@
 import UIKit
 import AlamofireImage
 
-class VideoSearchResultCell: UITableViewCell {
+class SearchVideoResultCell: UITableViewCell {
     
     @IBOutlet weak var videoScreenshot: UIImageView!
     @IBOutlet weak var lblTitle: UILabel!
@@ -26,7 +26,7 @@ class VideoSearchResultCell: UITableViewCell {
 //        // Configure the view for the selected state
 //    }
     
-    func configurate(data : VideoViewModel) {
+    func configurate(data : VideoBasicInfo) {
         self.lblTitle.text = data.title
         self.lblSubtitle.text = data.releaseDate
         

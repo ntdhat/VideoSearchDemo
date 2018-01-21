@@ -92,8 +92,8 @@ class MovieDBClientTests: XCTestCase {
             }
             
             XCTAssertNotNil(MovieDBClient.configurationBaseUrl)
-            XCTAssertNotNil(MovieDBClient.configurationBackdropSize)
-            XCTAssertNotNil(MovieDBClient.configurationPosterSize)
+            XCTAssertNotNil(MovieDBClient.configurationBackdropSizes)
+            XCTAssertNotNil(MovieDBClient.configurationPosterSizes)
         }
     }
     

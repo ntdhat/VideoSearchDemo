@@ -9,7 +9,7 @@
 import Foundation
 
 class VideoDetailViewModel {
-    var childViewModel: VideoBasicInfo
+    var childViewModel: VideoViewModel
     
     var title : String {
         return childViewModel.title
@@ -43,7 +43,7 @@ class VideoDetailViewModel {
         return txt
     }()
     
-    init(childViewModel: VideoBasicInfo) {
+    init(childViewModel: VideoViewModel) {
         self.childViewModel = childViewModel
     }
 }

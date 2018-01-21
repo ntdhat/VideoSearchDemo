@@ -23,8 +23,8 @@ class VideoDetailViewControllerTests: XCTestCase {
     
     func test_SetupUIWhenViewLoaded_Successful() {
         MovieDBClient.configurationBaseUrl = "_baseUrl_"
-        MovieDBClient.configurationPosterSize = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
-        MovieDBClient.configurationBackdropSize = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
+        MovieDBClient.configurationPosterSizes = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
+        MovieDBClient.configurationBackdropSizes = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
         MovieDBClient.genresList = [0: "genre_1", 1: "genre_1", 2: "genre_2", 3: "genre_3", 4: "genre_4"]
         
         let posterPath = "ABC"
@@ -47,14 +47,14 @@ class VideoDetailViewControllerTests: XCTestCase {
                                                MovieDBClient.JSONKey_VideoVoteCount: 50,
                                                MovieDBClient.JSONKey_VideoGenreIDs: [1,3,2]])
         
-        let sampleViewModel = VideoDetailViewModel(VideoModel(from: myDict))
+        let sampleViewModel = VideoDetailViewModel(childViewModel: VideoViewModel(model: VideoModel(from: myDict)))
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "VideoDetailViewController")
         let sut = vc as! VideoDetailViewController
         
-        sut.detailData = sampleViewModel
-        _ = sut.view
+        sut.viewModel = sampleViewModel
+        _ = sut.view // Make calling sut's viewDidLoad()
         
         XCTAssertEqual(sut.lblTitle.text, title)
         XCTAssertEqual(sut.lblReleaseDate.text, sampleViewModel.textReleaseDateRefined)

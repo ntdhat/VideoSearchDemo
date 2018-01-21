@@ -10,6 +10,7 @@ import UIKit
 
 class VideoDetailViewController: UIViewController {
     var viewModel : VideoDetailViewModel!
+    
     var loadImageCompletion: (()->Void)?
     
     var didSetupUI: Bool = false

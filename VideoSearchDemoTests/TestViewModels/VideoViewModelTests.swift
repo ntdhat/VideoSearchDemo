@@ -27,20 +27,21 @@ class VideoViewModelTests: XCTestCase {
         myDict = NSMutableDictionary()
         
         MovieDBClient.configurationBaseUrl = "_baseUrl_"
-        MovieDBClient.configurationPosterSize = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
-        MovieDBClient.configurationBackdropSize = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
+        MovieDBClient.configurationPosterSizes = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
+        MovieDBClient.configurationBackdropSizes = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
         MovieDBClient.genresList = [0: "genre_1", 1: "genre_1", 2: "genre_2", 3: "genre_3", 4: "genre_4"]
         
-        posterSizeConfig = MovieDBClient.configurationPosterSize.lastObject as! String
-        backdropSizeConfig = MovieDBClient.configurationBackdropSize.lastObject as! String
+        posterSizeConfig = MovieDBClient.configurationPosterSizes.lastObject as! String
+        backdropSizeConfig = MovieDBClient.configurationBackdropSizes.lastObject as! String
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        myDict = nil
         super.tearDown()
     }
     
-    func test_CreatVideoViewModel_PerfectParam_ReturnFull() {
+    func test_Init_FromPerfectModel_ReturnFull() {
         let posterPath = "ABC"
         let backdropPath = "XYZ"
         let title = "Some Title"
@@ -63,7 +64,7 @@ class VideoViewModelTests: XCTestCase {
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel)
         
         XCTAssertNotNil(createdViewModel)
         
@@ -82,7 +83,7 @@ class VideoViewModelTests: XCTestCase {
         XCTAssertEqual(createdViewModel.genres, ["genre_1","genre_3","genre_2"])
     }
     
-    func test_CreatVideoViewModel_SomeMissingParam_ReturnObjWithSomeNilProps() {
+    func test_Init_FromModel_WithMissingParams_ReturnObjWithSomeNilProps() {
         let backdropPath = "XYZ"
         let title = "Some Title"
         
@@ -91,7 +92,7 @@ class VideoViewModelTests: XCTestCase {
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel)
         
         XCTAssertNotNil(createdViewModel)
         
@@ -111,7 +112,7 @@ class VideoViewModelTests: XCTestCase {
         XCTAssertEqual(createdViewModel.genres, [])
     }
     
-    func test_CreatVideoViewModel_SomeWrongParamType_ReturnObjWithSomeNilProps() {
+    func test_Init_FromModel_WithWrongParamTypes_ReturnObjWithSomeNilProps() {
         let posterPath = 2
         let backdropPath = "XYZ"
         let title = 1
@@ -134,7 +135,7 @@ class VideoViewModelTests: XCTestCase {
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel)
         
         XCTAssertNotNil(createdViewModel)
         
@@ -154,7 +155,7 @@ class VideoViewModelTests: XCTestCase {
         XCTAssertEqual(createdViewModel.genres, [])
     }
     
-    func test_CreatVideoViewModel_WrongGenreFormat_ReturnFull() {
+    func test_Init_FromModel_WithWrongGenreFormat_ReturnFull() {
         let posterPath = "ABC"
         let backdropPath = "XYZ"
         let title = "Some Title"
@@ -177,7 +178,7 @@ class VideoViewModelTests: XCTestCase {
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel)
         
         XCTAssertNotNil(createdViewModel)
         
@@ -194,5 +195,45 @@ class VideoViewModelTests: XCTestCase {
         XCTAssertEqual(createdViewModel.voteCount, 50)
         
         XCTAssertEqual(createdViewModel.genres, ["genre_1","Not specified","Not specified"])
+    }
+    
+    func test_Init_FromPlainData_ReturnFull() {
+        let posterPath = "ABC"
+        let backdropPath = "XYZ"
+        let title = "Some Title"
+        let orgTitle = "Some Original Title"
+        let isAdult = Bool(false)
+        let overview = "Blah blah"
+        let release = "???"
+        
+        myDict = [MovieDBClient.JSONKey_VideoPosterPath: posterPath,
+                  MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
+                  MovieDBClient.JSONKey_VideoTitle: title,
+                  MovieDBClient.JSONKey_VideoOriginalTitle: orgTitle,
+                  MovieDBClient.JSONKey_VideoIsAdult: isAdult,
+                  MovieDBClient.JSONKey_VideoOverview: overview,
+                  MovieDBClient.JSONKey_VideoReleasedDate: release,
+                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
+                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1,
+                  MovieDBClient.JSONKey_VideoVoteCount: 50,
+                  MovieDBClient.JSONKey_VideoGenreIDs: [1,3,2]]
+        
+        let createdViewModel = VideoViewModel(data: myDict)
+        
+        XCTAssertNotNil(createdViewModel)
+        
+        XCTAssertEqual(createdViewModel.posterURL, URL(string: MovieDBClient.configurationBaseUrl + posterSizeConfig + posterPath))
+        XCTAssertEqual(createdViewModel.backdropURL, URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdropPath))
+        
+        XCTAssertEqual(createdViewModel.title, title)
+        XCTAssertEqual(createdViewModel.originalTitle, orgTitle)
+        XCTAssertEqual(createdViewModel.isAdult, isAdult)
+        XCTAssertEqual(createdViewModel.overview, overview)
+        XCTAssertEqual(createdViewModel.releaseDate, release)
+        XCTAssertEqual(createdViewModel.popularity, 3.5)
+        XCTAssertEqual(createdViewModel.voteAverage, 7.1)
+        XCTAssertEqual(createdViewModel.voteCount, 50)
+        
+        XCTAssertEqual(createdViewModel.genres, ["genre_1","genre_3","genre_2"])
     }
 }

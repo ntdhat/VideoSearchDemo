@@ -9,61 +9,14 @@
 import Foundation
 import Alamofire
 
-struct VideoBasicInfo {
-    let model: VideoModel
-    
-    var posterURL: URL?
-    var backdropURL: URL?
-    
-    let title: String
-    let originalTitle: String
-    let isAdult: Bool
-    let overview: String
-    let releaseDate: String
-    let popularity: Float
-    let voteAverage: Float
-    let voteCount: Int
-    var genres = [String]()
-    
-    init(model: VideoModel) {
-        self.model = model
-        
-        self.title = model.title ?? "Unknown"
-        self.originalTitle = model.originalTitle ?? "Unknown"
-        self.isAdult = model.isAdult ?? true
-        self.overview = model.overview ?? "Not specified"
-        self.releaseDate = model.releaseDate ?? "Not specified"
-        self.popularity = model.popularity ?? 0.0
-        self.voteAverage = model.voteAverage ?? 0.0
-        self.voteCount = model.voteCount ?? 0
-        
-        if let genreIDs = model.genres {
-            for genreID in genreIDs {
-                let genreName = MovieDBClient.genresList[genreID] ?? "Not specified"
-                self.genres.append(genreName)
-            }
-        }
-        
-        let configurationPosterSize = MovieDBClient.configurationPosterSize.lastObject as? String
-        if let poster = model.posterURL, let posterSizeConfig = configurationPosterSize {
-            self.posterURL = URL(string: MovieDBClient.configurationBaseUrl + posterSizeConfig + poster)
-        }
-        
-        let configurationBackdropSize = MovieDBClient.configurationBackdropSize.lastObject as? String
-        if let backdrop = model.backdropURL, let backdropSizeConfig = configurationBackdropSize {
-            self.backdropURL = URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdrop)
-        }
-    }
-}
-
 class SearchVideoViewModel {
-    private var videos = [VideoBasicInfo]()
+    private var videos = [VideoViewModel]()
     var totalPages = 0
     var currentPage = 0
     var totalResults = 0
     var stringQuery = ""
     
-    subscript (index: Int) -> VideoBasicInfo {
+    subscript (index: Int) -> VideoViewModel? {
         get {
             return videos[index]
         }
@@ -71,12 +24,13 @@ class SearchVideoViewModel {
     
     typealias CompletionClosure = (Bool) -> Void
     
-    func search(for str: String?, page: Int = 1, shouldReset: Bool = true, completion: CompletionClosure?) {
-        guard let searchString = str else { return }
+    func search(for searchString: String, page: Int = 1, completion: CompletionClosure?) {        
+        var tempPage = page
+        if page<1 {tempPage = 1}
         
-        prepareDataContainer(page)
+        reset(tempPage)
         
-        let params = createSearchQuery(searchString: searchString, atPage: page)
+        let params = createSearchQuery(searchString: searchString, atPage: tempPage)
         
         // Call to DataAccess to make searching query to backend
         MovieDBClient.searchMovie(parameters: params) { response in
@@ -92,22 +46,26 @@ class SearchVideoViewModel {
             currentPage < totalPages,
             !stringQuery.isEmpty
             else { return }
-        search(for: stringQuery, page: currentPage + 1, shouldReset: false, completion: completion)
+        search(for: stringQuery, page: currentPage + 1, completion: completion)
     }
     
-    func prepareDataContainer(_ page: Int) {
+    private func reset(_ page: Int) {
         if page==1 {
+            totalResults=0
+            totalPages=0
+            currentPage=0
+            stringQuery=""
             videos.removeAll()
         }
     }
     
-    func createSearchQuery(searchString ss: String, atPage pg: Int) -> Dictionary<String, Any> {
+    private func createSearchQuery(searchString ss: String, atPage pg: Int) -> Dictionary<String, Any> {
         return ["language" : "en-US",
                 "page" : pg,
                 "query" : ss]
     }
     
-    func fetchSearchResult(response r: DataResponse<Any>, searchString ss: String) -> Bool {
+    private func fetchSearchResult(response r: DataResponse<Any>, searchString ss: String) -> Bool {
         guard
             let searchResult = r.result.value as? NSDictionary,
             let results = searchResult.value(forKey: MovieDBClient.JSONKey_ResultsArray) as? Array<Any>,
@@ -121,9 +79,8 @@ class SearchVideoViewModel {
         for jsonObj in results {
             guard let itemDict = jsonObj as? NSDictionary
                 else { break }
-            let viewmodel = VideoModel(from: itemDict)
-            let info = VideoBasicInfo(model: viewmodel)
-            self.videos.append(info)
+            
+            self.videos.append(VideoViewModel(data: itemDict))
         }
         
         self.totalPages = totalPages

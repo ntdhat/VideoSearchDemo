@@ -69,20 +69,16 @@ class VideoSearchViewController: UIViewController {
             object: nil)
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetailView", let detailVC = segue.destination as? VideoDetailViewController {
-            let videoDetailsBasicInfo = viewModel[currentSelectedIdxPath.row]
+        if segue.identifier == "showDetailView",
+            let detailVC = segue.destination as? VideoDetailViewController,
+            let videoDetailsBasicInfo = viewModel[currentSelectedIdxPath.row] {
             detailVC.viewModel = VideoDetailViewModel(childViewModel: videoDetailsBasicInfo)
         }
     }
     
     func startSearch(searchText : String) {
-        viewModel.search(for: searchBar.text) { isSuccess in
+        viewModel.search(for: searchText) { isSuccess in
             guard isSuccess == true else {
                 self.displaySearchError()
                 return
@@ -170,8 +166,7 @@ extension VideoSearchViewController : UITableViewDelegate, UITableViewDataSource
         if indexPath.row < viewModel.totalResults  {
             let cell : SearchVideoResultCell
             cell = videoTableView.dequeueReusableCell(withIdentifier: "SearchVideoResultCell", for: indexPath) as! SearchVideoResultCell
-            let videoData = viewModel[indexPath.row]
-            cell.configurate(data: videoData)
+            cell.configurate(data: viewModel[indexPath.row]!)
             return cell
         }
         else {

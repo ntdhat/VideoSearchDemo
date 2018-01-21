@@ -13,7 +13,7 @@
         <!--Video Search View Controller-->
         <scene sceneID="ZTn-JQ-G8L">
             <objects>
-                <viewController id="GZs-Pn-8kv" customClass="VideoSearchViewController" customModule="VideoSearchDemo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VideoSearchViewController" id="GZs-Pn-8kv" customClass="VideoSearchViewController" customModule="VideoSearchDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bv5-Ze-mfZ"/>
                         <viewControllerLayoutGuide type="bottom" id="Iv9-tI-3d9"/>
@@ -72,6 +72,9 @@
                                                 <constraint firstAttribute="bottom" secondItem="qAl-Yp-u5j" secondAttribute="bottom" id="yku-aG-GZF"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <accessibility key="accessibilityConfiguration" identifier="SearchVideoResultCell">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                         <connections>
                                             <outlet property="lblSubtitle" destination="qAl-Yp-u5j" id="z2F-28-dcv"/>
                                             <outlet property="lblTitle" destination="Coa-60-Qia" id="Oe0-SM-xpH"/>
@@ -108,6 +111,9 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="LoadingMoreCell">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                         <connections>
                                             <outlet property="activityIndicator" destination="tkq-hO-noz" id="Qmo-CY-EbA"/>
                                             <outlet property="btnLoadMore" destination="S4J-hi-cD2" id="6Ii-nL-34P"/>
@@ -169,6 +175,7 @@
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wd0-me-BM4">
                                         <rect key="frame" x="337" y="10" width="30" height="30"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="video btn cancel"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="8rQ-R9-3Nh"/>
                                             <constraint firstAttribute="width" constant="30" id="GdE-If-0Yk"/>
@@ -189,7 +196,7 @@
                                     <constraint firstItem="Wd0-me-BM4" firstAttribute="leading" secondItem="VbJ-uF-Lod" secondAttribute="trailing" constant="16" id="yqd-ba-HLP"/>
                                 </constraints>
                             </view>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="aNC-tg-b8G">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="aNC-tg-b8G">
                                 <rect key="frame" x="8" y="186" width="359" height="473"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
@@ -227,6 +234,9 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <accessibility key="accessibilityConfiguration" identifier="Video Detail VC">
+                            <bool key="isElement" value="YES"/>
+                        </accessibility>
                         <constraints>
                             <constraint firstItem="kdP-0m-kgQ" firstAttribute="leading" secondItem="Vlb-U2-YEz" secondAttribute="leading" constant="8" id="4NW-DR-vZZ"/>
                             <constraint firstItem="Fy1-ur-QUX" firstAttribute="top" secondItem="o6k-sH-up5" secondAttribute="bottom" constant="8" id="6Rh-vZ-zY2"/>

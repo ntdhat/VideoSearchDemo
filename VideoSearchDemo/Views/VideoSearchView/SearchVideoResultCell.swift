@@ -15,10 +15,11 @@ class SearchVideoResultCell: UITableViewCell {
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblSubtitle: UILabel!
     
-//    override func awakeFromNib() {
-//        super.awakeFromNib()
-//        // Initialization code
-//    }
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+        self.isAccessibilityElement = true
+    }
 //
 //    override func setSelected(_ selected: Bool, animated: Bool) {
 //        super.setSelected(selected, animated: animated)
@@ -26,13 +27,15 @@ class SearchVideoResultCell: UITableViewCell {
 //        // Configure the view for the selected state
 //    }
     
-    func configurate(data : VideoBasicInfo) {
+    func configurate(data : VideoViewModel) {
         self.lblTitle.text = data.title
         self.lblSubtitle.text = data.releaseDate
         
         videoScreenshot.image = nil
         guard let backdropUrl = data.backdropURL else { return }
         videoScreenshot.af_setImage(withURL: backdropUrl)
+        
+        self.isAccessibilityElement = true
     }
     
 }
@@ -40,6 +43,12 @@ class SearchVideoResultCell: UITableViewCell {
 class LoadingMoreCell: UITableViewCell {
     @IBOutlet weak var btnLoadMore: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+        self.isAccessibilityElement = true
+    }
     
     @IBAction func btnLoadMoreClicked(_ sender: Any) {
         self.btnLoadMore.isHidden = true
@@ -50,5 +59,7 @@ class LoadingMoreCell: UITableViewCell {
     func configurate() {
         self.btnLoadMore.isHidden = false
         self.activityIndicator.stopAnimating()
+        
+        self.isAccessibilityElement = true
     }
 }

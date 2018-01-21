@@ -40,6 +40,16 @@
                ReferencedContainer = "container:VideoSearchDemo.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "84FFE0222013BFAD00C21BB3"
+               BuildableName = "VideoSearchDemoUITests.xctest"
+               BlueprintName = "VideoSearchDemoUITests"
+               ReferencedContainer = "container:VideoSearchDemo.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

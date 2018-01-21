@@ -54,8 +54,8 @@ class MovieDBClient {
     }()
     
     static var configurationBaseUrl : String!
-    static var configurationBackdropSize : NSArray!
-    static var configurationPosterSize : NSArray!
+    static var configurationBackdropSizes : NSArray!
+    static var configurationPosterSizes : NSArray!
     
     static var genresList = [Int:String]()
     
@@ -86,8 +86,8 @@ class MovieDBClient {
             
             let imagesConfiguation = json.value(forKey: JSONKey_ConfigurationImages) as? NSDictionary
             configurationBaseUrl = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBaseURL) as! String
-            configurationPosterSize = imagesConfiguation?.value(forKey: JSONKey_ConfigurationPosterSizes) as! NSArray
-            configurationBackdropSize = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBackdropSizes) as! NSArray
+            configurationPosterSizes = imagesConfiguation?.value(forKey: JSONKey_ConfigurationPosterSizes) as! NSArray
+            configurationBackdropSizes = imagesConfiguation?.value(forKey: JSONKey_ConfigurationBackdropSizes) as! NSArray
             
             completion?(nil)
         }

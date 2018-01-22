@@ -11,6 +11,7 @@ import XCTest
 
 class VideoViewModelTests: XCTestCase {
     var myDict: NSMutableDictionary!
+    var stubDataAccess: MovieDBClient!
     var posterSizeConfig : String!
     var backdropSizeConfig : String!
     
@@ -26,13 +27,14 @@ class VideoViewModelTests: XCTestCase {
         
         myDict = NSMutableDictionary()
         
-        MovieDBClient.configurationBaseUrl = "_baseUrl_"
-        MovieDBClient.configurationPosterSizes = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
-        MovieDBClient.configurationBackdropSizes = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
-        MovieDBClient.genresList = [0: "genre_1", 1: "genre_1", 2: "genre_2", 3: "genre_3", 4: "genre_4"]
+        stubDataAccess = MovieDBClient()
+        stubDataAccess.configurationBaseUrl = "_baseUrl_"
+        stubDataAccess.configurationPosterSizes = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
+        stubDataAccess.configurationBackdropSizes = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
+        stubDataAccess.genresList = [0: "genre_1", 1: "genre_1", 2: "genre_2", 3: "genre_3", 4: "genre_4"]
         
-        posterSizeConfig = MovieDBClient.configurationPosterSizes.lastObject as! String
-        backdropSizeConfig = MovieDBClient.configurationBackdropSizes.lastObject as! String
+        posterSizeConfig = stubDataAccess.configurationPosterSizes.lastObject as! String
+        backdropSizeConfig = stubDataAccess.configurationBackdropSizes.lastObject as! String
     }
     
     override func tearDown() {
@@ -50,26 +52,26 @@ class VideoViewModelTests: XCTestCase {
         let overview = "Blah blah"
         let release = "???"
         
-        myDict = [MovieDBClient.JSONKey_VideoPosterPath: posterPath,
-                  MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
-                  MovieDBClient.JSONKey_VideoTitle: title,
-                  MovieDBClient.JSONKey_VideoOriginalTitle: orgTitle,
-                  MovieDBClient.JSONKey_VideoIsAdult: isAdult,
-                  MovieDBClient.JSONKey_VideoOverview: overview,
-                  MovieDBClient.JSONKey_VideoReleasedDate: release,
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1,
-                  MovieDBClient.JSONKey_VideoVoteCount: 50,
-                  MovieDBClient.JSONKey_VideoGenreIDs: [1,3,2]]
+        myDict = [MovieDBKeys.VideoPosterPath: posterPath,
+                  MovieDBKeys.VideoBackdropPath: backdropPath,
+                  MovieDBKeys.VideoTitle: title,
+                  MovieDBKeys.VideoOriginalTitle: orgTitle,
+                  MovieDBKeys.VideoIsAdult: isAdult,
+                  MovieDBKeys.VideoOverview: overview,
+                  MovieDBKeys.VideoReleasedDate: release,
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: 7.1,
+                  MovieDBKeys.VideoVoteCount: 50,
+                  MovieDBKeys.VideoGenreIDs: [1,3,2]]
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(model: createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel, dataAccess: stubDataAccess)
         
         XCTAssertNotNil(createdViewModel)
         
-        XCTAssertEqual(createdViewModel.posterURL, URL(string: MovieDBClient.configurationBaseUrl + posterSizeConfig + posterPath))
-        XCTAssertEqual(createdViewModel.backdropURL, URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdropPath))
+        XCTAssertEqual(createdViewModel.posterURL, URL(string: stubDataAccess.configurationBaseUrl + posterSizeConfig + posterPath))
+        XCTAssertEqual(createdViewModel.backdropURL, URL(string: stubDataAccess.configurationBaseUrl + backdropSizeConfig + backdropPath))
         
         XCTAssertEqual(createdViewModel.title, title)
         XCTAssertEqual(createdViewModel.originalTitle, orgTitle)
@@ -87,17 +89,17 @@ class VideoViewModelTests: XCTestCase {
         let backdropPath = "XYZ"
         let title = "Some Title"
         
-        myDict = [MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
-                  MovieDBClient.JSONKey_VideoTitle: title]
+        myDict = [MovieDBKeys.VideoBackdropPath: backdropPath,
+                  MovieDBKeys.VideoTitle: title]
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(model: createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel, dataAccess: stubDataAccess)
         
         XCTAssertNotNil(createdViewModel)
         
         XCTAssertNil(createdViewModel.posterURL)
-        XCTAssertEqual(createdViewModel.backdropURL, URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdropPath))
+        XCTAssertEqual(createdViewModel.backdropURL, URL(string: stubDataAccess.configurationBaseUrl + backdropSizeConfig + backdropPath))
         
         XCTAssertEqual(createdViewModel.title, title)
         XCTAssertEqual(createdViewModel.originalTitle, "Unknown")
@@ -121,26 +123,26 @@ class VideoViewModelTests: XCTestCase {
         let overview = "Blah blah"
         let release = "???"
         
-        myDict = [MovieDBClient.JSONKey_VideoPosterPath: posterPath,
-                  MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
-                  MovieDBClient.JSONKey_VideoTitle: title,
-                  MovieDBClient.JSONKey_VideoOriginalTitle: orgTitle,
-                  MovieDBClient.JSONKey_VideoIsAdult: isAdult,
-                  MovieDBClient.JSONKey_VideoOverview: overview,
-                  MovieDBClient.JSONKey_VideoReleasedDate: release,
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: Bool(false),
-                  MovieDBClient.JSONKey_VideoVoteCount: "50",
-                  MovieDBClient.JSONKey_VideoGenreIDs: ["1","3","2"]]
+        myDict = [MovieDBKeys.VideoPosterPath: posterPath,
+                  MovieDBKeys.VideoBackdropPath: backdropPath,
+                  MovieDBKeys.VideoTitle: title,
+                  MovieDBKeys.VideoOriginalTitle: orgTitle,
+                  MovieDBKeys.VideoIsAdult: isAdult,
+                  MovieDBKeys.VideoOverview: overview,
+                  MovieDBKeys.VideoReleasedDate: release,
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: Bool(false),
+                  MovieDBKeys.VideoVoteCount: "50",
+                  MovieDBKeys.VideoGenreIDs: ["1","3","2"]]
         
         let createdModel = VideoModel(from: myDict)
         
-        let createdViewModel = VideoViewModel(model: createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel, dataAccess: stubDataAccess)
         
         XCTAssertNotNil(createdViewModel)
         
         XCTAssertNil(createdViewModel.posterURL)
-        XCTAssertEqual(createdViewModel.backdropURL, URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdropPath))
+        XCTAssertEqual(createdViewModel.backdropURL, URL(string: stubDataAccess.configurationBaseUrl + backdropSizeConfig + backdropPath))
         
         XCTAssertEqual(createdViewModel.title, "Unknown")
         XCTAssertEqual(createdViewModel.originalTitle, orgTitle)
@@ -164,26 +166,25 @@ class VideoViewModelTests: XCTestCase {
         let overview = "Blah blah"
         let release = "???"
         
-        myDict = [MovieDBClient.JSONKey_VideoPosterPath: posterPath,
-                  MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
-                  MovieDBClient.JSONKey_VideoTitle: title,
-                  MovieDBClient.JSONKey_VideoOriginalTitle: orgTitle,
-                  MovieDBClient.JSONKey_VideoIsAdult: isAdult,
-                  MovieDBClient.JSONKey_VideoOverview: overview,
-                  MovieDBClient.JSONKey_VideoReleasedDate: release,
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1,
-                  MovieDBClient.JSONKey_VideoVoteCount: 50,
-                  MovieDBClient.JSONKey_VideoGenreIDs: [1,-3,200]]
+        myDict = [MovieDBKeys.VideoPosterPath: posterPath,
+                  MovieDBKeys.VideoBackdropPath: backdropPath,
+                  MovieDBKeys.VideoTitle: title,
+                  MovieDBKeys.VideoOriginalTitle: orgTitle,
+                  MovieDBKeys.VideoIsAdult: isAdult,
+                  MovieDBKeys.VideoOverview: overview,
+                  MovieDBKeys.VideoReleasedDate: release,
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: 7.1,
+                  MovieDBKeys.VideoVoteCount: 50,
+                  MovieDBKeys.VideoGenreIDs: [1,-3,200]]
         
         let createdModel = VideoModel(from: myDict)
-        
-        let createdViewModel = VideoViewModel(model: createdModel)
+        let createdViewModel = VideoViewModel(model: createdModel, dataAccess: stubDataAccess)
         
         XCTAssertNotNil(createdViewModel)
         
-        XCTAssertEqual(createdViewModel.posterURL, URL(string: MovieDBClient.configurationBaseUrl + posterSizeConfig + posterPath))
-        XCTAssertEqual(createdViewModel.backdropURL, URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdropPath))
+        XCTAssertEqual(createdViewModel.posterURL, URL(string: stubDataAccess.configurationBaseUrl + posterSizeConfig + posterPath))
+        XCTAssertEqual(createdViewModel.backdropURL, URL(string: stubDataAccess.configurationBaseUrl + backdropSizeConfig + backdropPath))
         
         XCTAssertEqual(createdViewModel.title, title)
         XCTAssertEqual(createdViewModel.originalTitle, orgTitle)
@@ -206,24 +207,24 @@ class VideoViewModelTests: XCTestCase {
         let overview = "Blah blah"
         let release = "???"
         
-        myDict = [MovieDBClient.JSONKey_VideoPosterPath: posterPath,
-                  MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
-                  MovieDBClient.JSONKey_VideoTitle: title,
-                  MovieDBClient.JSONKey_VideoOriginalTitle: orgTitle,
-                  MovieDBClient.JSONKey_VideoIsAdult: isAdult,
-                  MovieDBClient.JSONKey_VideoOverview: overview,
-                  MovieDBClient.JSONKey_VideoReleasedDate: release,
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1,
-                  MovieDBClient.JSONKey_VideoVoteCount: 50,
-                  MovieDBClient.JSONKey_VideoGenreIDs: [1,3,2]]
+        myDict = [MovieDBKeys.VideoPosterPath: posterPath,
+                  MovieDBKeys.VideoBackdropPath: backdropPath,
+                  MovieDBKeys.VideoTitle: title,
+                  MovieDBKeys.VideoOriginalTitle: orgTitle,
+                  MovieDBKeys.VideoIsAdult: isAdult,
+                  MovieDBKeys.VideoOverview: overview,
+                  MovieDBKeys.VideoReleasedDate: release,
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: 7.1,
+                  MovieDBKeys.VideoVoteCount: 50,
+                  MovieDBKeys.VideoGenreIDs: [1,3,2]]
         
-        let createdViewModel = VideoViewModel(data: myDict)
+        let createdViewModel = VideoViewModel(data: myDict, dataAccess: stubDataAccess)
         
         XCTAssertNotNil(createdViewModel)
         
-        XCTAssertEqual(createdViewModel.posterURL, URL(string: MovieDBClient.configurationBaseUrl + posterSizeConfig + posterPath))
-        XCTAssertEqual(createdViewModel.backdropURL, URL(string: MovieDBClient.configurationBaseUrl + backdropSizeConfig + backdropPath))
+        XCTAssertEqual(createdViewModel.posterURL, URL(string: stubDataAccess.configurationBaseUrl + posterSizeConfig + posterPath))
+        XCTAssertEqual(createdViewModel.backdropURL, URL(string: stubDataAccess.configurationBaseUrl + backdropSizeConfig + backdropPath))
         
         XCTAssertEqual(createdViewModel.title, title)
         XCTAssertEqual(createdViewModel.originalTitle, orgTitle)

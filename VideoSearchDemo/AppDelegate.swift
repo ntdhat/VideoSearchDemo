@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        MovieDBClient.loadConfiguration()
-        MovieDBClient.loadGenresList()
+        MovieDBClient.shared.loadConfiguration()
+        MovieDBClient.shared.loadGenresList()
         
 //        let ret = cpuEmulator(subroutine: ["INV R42",
 //                                           "MOV 101,R00",

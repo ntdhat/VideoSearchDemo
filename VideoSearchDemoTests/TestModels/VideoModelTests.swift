@@ -33,17 +33,17 @@ class VideoModelTests: XCTestCase {
         let overview = "Blah blah"
         let release = "???"
         
-        myDict = [MovieDBClient.JSONKey_VideoPosterPath: posterPath,
-                  MovieDBClient.JSONKey_VideoBackdropPath: backdropPath,
-                  MovieDBClient.JSONKey_VideoTitle: title,
-                  MovieDBClient.JSONKey_VideoOriginalTitle: orgTitle,
-                  MovieDBClient.JSONKey_VideoIsAdult: isAdult,
-                  MovieDBClient.JSONKey_VideoOverview: overview,
-                  MovieDBClient.JSONKey_VideoReleasedDate: release,
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1,
-                  MovieDBClient.JSONKey_VideoVoteCount: 50,
-                  MovieDBClient.JSONKey_VideoGenreIDs: [1,3,2]]
+        myDict = [MovieDBKeys.VideoPosterPath: posterPath,
+                  MovieDBKeys.VideoBackdropPath: backdropPath,
+                  MovieDBKeys.VideoTitle: title,
+                  MovieDBKeys.VideoOriginalTitle: orgTitle,
+                  MovieDBKeys.VideoIsAdult: isAdult,
+                  MovieDBKeys.VideoOverview: overview,
+                  MovieDBKeys.VideoReleasedDate: release,
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: 7.1,
+                  MovieDBKeys.VideoVoteCount: 50,
+                  MovieDBKeys.VideoGenreIDs: [1,3,2]]
         
         let createdModel = VideoModel(from: myDict)
         
@@ -62,9 +62,9 @@ class VideoModelTests: XCTestCase {
     }
     
     func test_CreateVideoModel_WithSomeNilParam_ReturnObjWithSomeNilProperties() {
-        myDict.setValue(nil, forKey: MovieDBClient.JSONKey_VideoTitle)
-        myDict.setValue(nil, forKey: MovieDBClient.JSONKey_VideoPosterPath)
-        myDict.setValue(nil, forKey: MovieDBClient.JSONKey_VideoReleasedDate)
+        myDict.setValue(nil, forKey: MovieDBKeys.VideoTitle)
+        myDict.setValue(nil, forKey: MovieDBKeys.VideoPosterPath)
+        myDict.setValue(nil, forKey: MovieDBKeys.VideoReleasedDate)
         let createdModel = VideoModel(from: myDict)
         
         XCTAssertNil(createdModel.title)
@@ -73,9 +73,9 @@ class VideoModelTests: XCTestCase {
     }
     
     func test_CreateVideoModel_WithSomeWrongParamType_ReturnObjWithSomeNilProperties() {
-        myDict.setValue(1, forKey: MovieDBClient.JSONKey_VideoTitle)
-        myDict.setValue(Bool(false), forKey: MovieDBClient.JSONKey_VideoPosterPath)
-        myDict.setValue(nil, forKey: MovieDBClient.JSONKey_VideoPopularity)
+        myDict.setValue(1, forKey: MovieDBKeys.VideoTitle)
+        myDict.setValue(Bool(false), forKey: MovieDBKeys.VideoPosterPath)
+        myDict.setValue(nil, forKey: MovieDBKeys.VideoPopularity)
         let createdModel = VideoModel(from: myDict)
         
         XCTAssertNil(createdModel.title)

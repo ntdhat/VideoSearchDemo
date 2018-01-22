@@ -24,11 +24,7 @@ struct VideoViewModel {
     let voteCount: Int
     var genres = [String]()
     
-    var configurationBaseUrl : String! = MovieDBClient.configurationBaseUrl
-    var configurationPosterSizes : NSArray! = MovieDBClient.configurationPosterSizes
-    var configurationBackdropSizes : NSArray! = MovieDBClient.configurationBackdropSizes
-    
-    init(model: VideoModel) {
+    init(model: VideoModel, dataAccess: MovieDBClient = MovieDBClient.shared) {
         self.model = model
         
         self.title = model.title ?? "Unknown"
@@ -42,23 +38,23 @@ struct VideoViewModel {
         
         if let genreIDs = model.genres {
             for genreID in genreIDs {
-                let genreName = MovieDBClient.genresList[genreID] ?? "Not specified"
+                let genreName = dataAccess.genresList[genreID] ?? "Not specified"
                 self.genres.append(genreName)
             }
         }
         
-        let configurationPosterSize = configurationPosterSizes.lastObject as? String
+        let configurationPosterSize = dataAccess.configurationPosterSizes.lastObject as? String
         if let poster = model.posterURL, let posterSizeConfig = configurationPosterSize {
-            self.posterURL = URL(string: configurationBaseUrl + posterSizeConfig + poster)
+            self.posterURL = URL(string: dataAccess.configurationBaseUrl + posterSizeConfig + poster)
         }
         
-        let configurationBackdropSize = configurationBackdropSizes.lastObject as? String
+        let configurationBackdropSize = dataAccess.configurationBackdropSizes.lastObject as? String
         if let backdrop = model.backdropURL, let backdropSizeConfig = configurationBackdropSize {
-            self.backdropURL = URL(string: configurationBaseUrl + backdropSizeConfig + backdrop)
+            self.backdropURL = URL(string: dataAccess.configurationBaseUrl + backdropSizeConfig + backdrop)
         }
     }
     
-    init(data: NSDictionary) {
-        self.init(model: VideoModel(from: data))
+    init(data: NSDictionary, dataAccess: MovieDBClient = MovieDBClient.shared) {
+        self.init(model: VideoModel(from: data), dataAccess: dataAccess)
     }
 }

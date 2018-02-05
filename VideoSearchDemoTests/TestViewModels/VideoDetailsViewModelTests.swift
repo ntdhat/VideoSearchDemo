@@ -11,6 +11,7 @@ import XCTest
 
 class VideoDetailsViewModelTests: XCTestCase {
     var myDict: NSMutableDictionary!
+    var stubDataAccess: MovieDBClient!
     var posterSizeConfig : String!
     var backdropSizeConfig : String!
     
@@ -20,13 +21,14 @@ class VideoDetailsViewModelTests: XCTestCase {
         
         myDict = NSMutableDictionary()
         
-        MovieDBClient.configurationBaseUrl = "_baseUrl_"
-        MovieDBClient.configurationPosterSizes = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
-        MovieDBClient.configurationBackdropSizes = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
-        MovieDBClient.genresList = [0: "genre_1", 1: "genre_1", 2: "genre_2", 3: "genre_3", 4: "genre_4"]
+        stubDataAccess = MovieDBClient()
+        stubDataAccess.configurationBaseUrl = "_baseUrl_"
+        stubDataAccess.configurationPosterSizes = ["_posterSize_1_", "_posterSize_2_", "_posterSize_3_"]
+        stubDataAccess.configurationBackdropSizes = ["_bkdropSize_1_", "_bkdropSize_2_", "_bkdropSize_3_"]
+        stubDataAccess.genresList = [0: "genre_1", 1: "genre_1", 2: "genre_2", 3: "genre_3", 4: "genre_4"]
         
-        posterSizeConfig = MovieDBClient.configurationPosterSizes.lastObject as! String
-        backdropSizeConfig = MovieDBClient.configurationBackdropSizes.lastObject as! String
+        posterSizeConfig = stubDataAccess.configurationPosterSizes.lastObject as! String
+        backdropSizeConfig = stubDataAccess.configurationBackdropSizes.lastObject as! String
     }
     
     override func tearDown() {
@@ -35,16 +37,16 @@ class VideoDetailsViewModelTests: XCTestCase {
     }
     
     func test_Init_FullParams() {
-        myDict = [MovieDBClient.JSONKey_VideoPosterPath: "ABC",
-                  MovieDBClient.JSONKey_VideoTitle: "Some Title",
-                  MovieDBClient.JSONKey_VideoOverview: "Blah blah",
-                  MovieDBClient.JSONKey_VideoReleasedDate: "???",
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1,
-                  MovieDBClient.JSONKey_VideoVoteCount: 50,
-                  MovieDBClient.JSONKey_VideoGenreIDs: [1,3,2]]
+        myDict = [MovieDBKeys.VideoPosterPath: "ABC",
+                  MovieDBKeys.VideoTitle: "Some Title",
+                  MovieDBKeys.VideoOverview: "Blah blah",
+                  MovieDBKeys.VideoReleasedDate: "???",
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: 7.1,
+                  MovieDBKeys.VideoVoteCount: 50,
+                  MovieDBKeys.VideoGenreIDs: [1,3,2]]
         
-        let viewModel = VideoViewModel(data: myDict)
+        let viewModel = VideoViewModel(data: myDict, dataAccess: stubDataAccess)
         let videoDetailsViewModel = VideoDetailViewModel(childViewModel: viewModel)
         
         XCTAssertNotNil(videoDetailsViewModel)
@@ -63,11 +65,11 @@ class VideoDetailsViewModelTests: XCTestCase {
     }
     
     func test_Init_MissingSomeParams() {
-        myDict = [MovieDBClient.JSONKey_VideoTitle: "Some Title",
-                  MovieDBClient.JSONKey_VideoPopularity: 3.5,
-                  MovieDBClient.JSONKey_VideoVoteAverage: 7.1]
+        myDict = [MovieDBKeys.VideoTitle: "Some Title",
+                  MovieDBKeys.VideoPopularity: 3.5,
+                  MovieDBKeys.VideoVoteAverage: 7.1]
         
-        let viewModel = VideoViewModel(data: myDict)
+        let viewModel = VideoViewModel(data: myDict, dataAccess: stubDataAccess)
         let videoDetailsViewModel = VideoDetailViewModel(childViewModel: viewModel)
         
         XCTAssertNotNil(videoDetailsViewModel)

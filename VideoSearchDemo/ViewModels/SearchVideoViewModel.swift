@@ -9,12 +9,19 @@
 import Foundation
 import Alamofire
 
+protocol SearchVideoViewModelOutput {
+    func didSearch(success: Bool) -> Void
+}
+
 class SearchVideoViewModel {
     private var videos = [VideoViewModel]()
     var totalPages = 0
     var currentPage = 0
     var totalResults = 0
     var stringQuery = ""
+    
+    var dataAccess: MovieDBClient = MovieDBClient.shared
+    var output: SearchVideoViewModelOutput?
     
     subscript (index: Int) -> VideoViewModel? {
         get {
@@ -24,7 +31,12 @@ class SearchVideoViewModel {
     
     typealias CompletionClosure = (Bool) -> Void
     
-    func search(for searchString: String, page: Int = 1, completion: CompletionClosure?) {        
+    convenience init(outputHandler: SearchVideoViewModelOutput? = nil) {
+        self.init()
+        self.output = outputHandler
+    }
+    
+    func search(for searchString: String, page: Int = 1) {
         var tempPage = page
         if page<1 {tempPage = 1}
         
@@ -33,20 +45,20 @@ class SearchVideoViewModel {
         let params = createSearchQuery(searchString: searchString, atPage: tempPage)
         
         // Call to DataAccess to make searching query to backend
-        MovieDBClient.searchMovie(parameters: params) { response in
+        dataAccess.searchMovie(parameters: params) { response in
             // Fetch data returned
             let isFetchSuccess = self.fetchSearchResult(response : response, searchString: searchString)
             // Invoke the completion handler
-            completion?(isFetchSuccess)
+            self.output?.didSearch(success: isFetchSuccess)
         }
     }
     
-    func loadMoreSearchResults(completion: CompletionClosure?) {
+    func loadMoreSearchResults() {
         guard
             currentPage < totalPages,
             !stringQuery.isEmpty
             else { return }
-        search(for: stringQuery, page: currentPage + 1, completion: completion)
+        search(for: stringQuery, page: currentPage + 1)
     }
     
     private func reset(_ page: Int) {
@@ -68,9 +80,9 @@ class SearchVideoViewModel {
     private func fetchSearchResult(response r: DataResponse<Any>, searchString ss: String) -> Bool {
         guard
             let searchResult = r.result.value as? NSDictionary,
-            let results = searchResult.value(forKey: MovieDBClient.JSONKey_ResultsArray) as? Array<Any>,
-            let totalPages = searchResult.value(forKey: MovieDBClient.JSONKey_TotalPages) as? Int,
-            let curPage = searchResult.value(forKey: MovieDBClient.JSONKey_CurrentPage) as? Int
+            let results = searchResult.value(forKey: MovieDBKeys.ResultsArray) as? Array<Any>,
+            let totalPages = searchResult.value(forKey: MovieDBKeys.TotalPages) as? Int,
+            let curPage = searchResult.value(forKey: MovieDBKeys.CurrentPage) as? Int
             else {
                 return false
         }
@@ -80,7 +92,7 @@ class SearchVideoViewModel {
             guard let itemDict = jsonObj as? NSDictionary
                 else { break }
             
-            self.videos.append(VideoViewModel(data: itemDict))
+            self.videos.append(VideoViewModel(data: itemDict, dataAccess: dataAccess))
         }
         
         self.totalPages = totalPages

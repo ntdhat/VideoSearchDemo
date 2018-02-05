@@ -59,6 +59,8 @@ class VideoSearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         registerForNotifications()
+        
+        viewModel.output = self
     }
     
     func registerForNotifications() {
@@ -78,23 +80,11 @@ class VideoSearchViewController: UIViewController {
     }
     
     func startSearch(searchText : String) {
-        viewModel.search(for: searchText) { isSuccess in
-            guard isSuccess == true else {
-                self.displaySearchError()
-                return
-            }
-            self.updateSearchResults()
-        }
+        viewModel.search(for: searchText)
     }
     
     @objc func loadMore() {        
-        viewModel.loadMoreSearchResults() { isSuccess in
-            guard isSuccess == true else {
-                self.displaySearchError()
-                return
-            }
-            self.videoTableView.reloadData()
-        }
+        viewModel.loadMoreSearchResults()
     }
     
     func updateSearchResults() {
@@ -104,7 +94,10 @@ class VideoSearchViewController: UIViewController {
         }
         
         videoTableView.reloadData()
-        videoTableView.contentOffset = .zero
+        
+        if viewModel.currentPage == 1 {
+            videoTableView.contentOffset = .zero
+        }
     }
     
     func isAllResultsDisplayed() -> Bool {
@@ -121,6 +114,17 @@ class VideoSearchViewController: UIViewController {
         let alert = UIAlertController(title: "Oops!", message: "There's no result", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+}
+
+// MARK: - MovieDB's callbacks
+extension VideoSearchViewController: SearchVideoViewModelOutput {
+    func didSearch(success: Bool) {
+        guard success == true else {
+            self.displaySearchError()
+            return
+        }
+        self.updateSearchResults()
     }
 }
 

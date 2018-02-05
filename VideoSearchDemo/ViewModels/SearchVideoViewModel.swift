@@ -21,7 +21,6 @@ class SearchVideoViewModel {
     var stringQuery = ""
     
     var dataAccess: MovieDBClient = MovieDBClient.shared
-    
     var output: SearchVideoViewModelOutput?
     
     subscript (index: Int) -> VideoViewModel? {
